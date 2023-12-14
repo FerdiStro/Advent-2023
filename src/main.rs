@@ -1,52 +1,55 @@
 use std::io;
 
-fn find_and_replace_first<'a>(input: &'a str, ziffern: &'a [(&'a str, &'a str)]) -> Option<(usize, &'a str, &'a str)> {
-    for &(wort, ziffer) in ziffern {
-        if let Some(pos) = input.find(wort) {
-            return Some((pos, wort, ziffer));
-        }
-    }
-    None
-}
 
-fn find_and_replace_last<'a>(input: &'a str, ziffern: &'a [(&'a str, &'a str)]) -> Option<(usize, &'a str, &'a str)> {
-    for &(wort, ziffer) in ziffern.iter().rev() {
-        if let Some(pos) = input.rfind(wort) {
-            return Some((pos, wort, ziffer));
-        }
-    }
-    None
-}
+// fn find_and_replace_first<'a>(input: &'a str, ziffern: &[(&str, &str)]) -> Option<(usize, &'a str, &'a str)> {
+//     for &(wort, ziffer) in ziffern {
+//         if let Some(pos) = input.find(wort) {
+//             return Some((pos, wort, ziffer));
+//         }
+//     }
+//     None
+// }
 
-fn map_string_int(line: &str) -> String {
-    let list = vec!["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+// fn find_and_replace_last<'a>(input: &'a str, ziffern: &[(&str, &str)]) -> Option<(usize, &'a str, &'a str)> {
+//     for &(wort, ziffer) in ziffern.iter().rev() {
+//         if let Some(pos) = input.rfind(wort) {
+//             return Some((pos, wort, ziffer));
+//         }
+//     }
+//     None
+// }
 
-    let ziffern = [
-        ("one",   "1"),
-        ("two",   "2"),
-        ("three", "3"),
-        ("four",  "4"),
-        ("five",  "5"),
-        ("six",   "6"),
-        ("seven", "7"),
-        ("eight", "8"),
-        ("nine",  "9"),
-    ];
+// fn map_string_int(mut line: String) -> String {
+//     let list = vec!["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 
-    let mut modified_string = line.to_string();
+//     let ziffern = [
+//         ("one",   "1"),
+//         ("two",   "2"),
+//         ("three", "3"),
+//         ("four",  "4"),
+//         ("five",  "5"),
+//         ("six",   "6"),
+//         ("seven", "7"),
+//         ("eight", "8"),
+//         ("nine",  "9"),
+//     ];
 
-    if let Some((erste_pos, wort, ziffer)) = find_and_replace_first(&line, &ziffern) {
-        modified_string.replace_range(erste_pos..(erste_pos + wort.len()), ziffer);
-    }
+//      // Klonen, um das Borrow Checker-Problem zu umgehen
+//     let mut modified_string = input_string.clone();
 
-    if let Some((letzte_pos, wort, ziffer)) = find_and_replace_last(&line, &ziffern) {
-        modified_string.replace_range(letzte_pos..(letzte_pos + wort.len()), ziffer);
-    }
+//     // Ersetze das gefundene Wort an der ersten Position durch die entsprechende Ziffer
+//     if let Some((erste_pos, wort, ziffer)) = find_and_replace_first(&input_string, &ziffern) {
+//         modified_string.replace_range(erste_pos..(erste_pos + wort.len()), ziffer);
+//     }
 
-    println!("LINE: {}", line);
-    modified_string
-}
+//     // Ersetze das gefundene Wort an der letzten Position durch die entsprechende Ziffer
+//     if let Some((letzte_pos, wort, ziffer)) = find_and_replace_last(&input_string, &ziffern) {
+//         modified_string.replace_range(letzte_pos..(letzte_pos + wort.len()), ziffer);
+//     }
 
+//     println!("LINE: {}", line);
+//     return line
+// }
 
 
 fn main() {
@@ -60,7 +63,7 @@ fn main() {
     for line in &mut list {
 
 
-        *line = map_string_int(line.clone());
+        // *line = map_string_int(line.clone());
 
        
 
