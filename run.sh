@@ -14,5 +14,5 @@ rm main.rs
 
 ./main
 
-
+rm -rf build/
 
