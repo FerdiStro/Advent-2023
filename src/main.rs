@@ -1,85 +1,120 @@
 use std::io;
+use std::collections::HashMap;
+use std::num::ParseIntError;
 
-fn map_string_int(mut line: String) -> String{
-    let dec_list : [&str; 9] = ["one", "two", "three", "four", "five", "six" , "seven" , "eight", "nine"];
-    let mut i: i32 = 1;
-    let mut find_first = false;
-    for n in 5..line.len(){
-        if n > line.len() || find_first == true {
-            break;
-        }
-        for dec in dec_list{
-            let fist_dec =   &line[..n];
-            let x = fist_dec.contains(dec);
-            if x == true{
-                line = line.replace(dec, &*i.to_string());
-                find_first = true;
-                break;
-            }
-            i += 1;
-        }
-        i = 1;
-    }
-    return line;
-}
+
+// Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+// Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+// Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+// Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+// Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
+
 
 
 fn main() {
-    let mut list  = read_input();
-    let mut result : usize = 0;
+    let max_green = 13;
+    let max_red = 12;
+    let max_blue = 14;
 
-    for line in &mut list {
-        *line = map_string_int(line.clone());
-        let parts =  line.chars();
-        let mut line_num = String::new();
 
-        for part  in parts {
-            if !part.is_alphabetic() {
-                line_num.push(part);
+    let mut games = read_input();
+
+
+    let mut non_valid_games_id: Vec<String> = Vec::new();
+
+
+    for game in games {
+        let id = game.split(':').next().and_then(|s| s.split("Game ").nth(1)).map_or("", |s| s.trim()).to_string();
+        let rounds = game.split(":").nth(1).map_or("", |s| s.trim()).split(";");
+
+        println!("Game_Id: {}", id);
+
+        for round in rounds {
+            for pic in round.split(',') {
+                if pic.contains("green") {
+                    let num: Result<i32, _> = pic.split("green").next().map_or("", |s| s.trim()).replace(" ", "").parse();
+                    match num {
+                        Ok(num) => {
+                            if num > max_green {
+                                non_valid_games_id.push(id.clone());
+                                break;
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+
+                    if pic.contains("red") {
+                        let num: Result<i32, _> = pic.split("red").next().map_or("", |s| s.trim()).replace(" ", "").parse();
+                        match num {
+                            Ok(num) => {
+                                if num > max_red {
+                                    non_valid_games_id.push(id.clone());
+                                    break;
+                                }
+                            }
+                            _ => {}
+                        }
+                        if pic.contains("blue") {
+                            let num: Result<i32, _> = pic.split("blue").next().map_or("", |s| s.trim()).replace(" ", "").parse();
+                            match num {
+                                Ok(num) => {
+                                    if num > max_blue {
+                                        non_valid_games_id.push(id.clone());
+                                        break;
+                                    }
+                                }
+                                _ => {}
+                            }
+                        }
+                    }
+
+                    println!("{}", round);
+
             }
-        }
 
-        let len = line_num.len();
-        let mut num = String::new();
 
-        if len ==  1{
-            num.push_str(&line_num);
-            num.push_str(&line_num);
-        }else if len >= 2 {
-            if let (Some(first), Some(last)) = (line_num.chars().next(), line_num.chars().last()) {
-                num.push(first);
-                num.push(last);
-            } 
-        }else if len == 0{
-            num.push('0');
-        }
-        println!("{}", num);
-        let line_result: Result<i32, _> = num.parse();
-        match line_result {
-            Ok(parsed_num) => {
-                result += parsed_num as usize;
+
+            println!("nonVaild: ");
+            for x in &non_valid_games_id{
+                println!("{}", x);
             }
-            Err(err) => {
-                println!("Error-Converting String to usize-int: {}", err);
-             }
+            println!("solution_1: {}", calculate_solution(&non_valid_games_id));
+
+
+            // only 12 red cubes, 13 green cubes, and 14 blue cubes
         }
     }
-    println!("Solution: {}", result);
-}
 
-fn  read_input() -> Vec<String> {
-    let mut input = String::new();
-    let mut run_input: bool  = true;
-    let mut input_list: Vec<String> = Vec::new();
 
-    while run_input == true {
-        io::stdin().read_line(&mut input).expect("Failed to read line");
-        let trimmed_input = input.trim().to_string();
-        match trimmed_input.as_str(){
-             "stop" =>  run_input=false,
-             _ => input_list.push(trimmed_input.clone()),
+    fn calculate_solution (list :&Vec<String>) -> i32 {
+        let mut return_int: i32  = 0;
+        for x in list{
+            let i: Result<i32, _> = x.parse();
+            match i{
+                Ok(x) =>{
+                    return_int += x;
+                }
+                _ => {}
+            }
         }
-        input.clear();
+        return  return_int;
     }
-    return input_list;
+
+    fn read_input() -> Vec<String> {
+        let mut input = String::new();
+        let mut run_input: bool = true;
+        let mut input_list: Vec<String> = Vec::new();
+
+        while run_input == true {
+            io::stdin().read_line(&mut input).expect("Failed to read line");
+            let trimmed_input = input.trim().to_string();
+            match trimmed_input.as_str() {
+                "stop" => run_input = false,
+                _ => input_list.push(trimmed_input.clone()),
+            }
+            input.clear();
+        }
+        return input_list;
+    }
 }
