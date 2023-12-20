@@ -24,7 +24,7 @@ fn map_string_int(mut line: String) -> String{
 }
 
 
-fn main() {
+pub fn solution_1() {
     let mut list  = read_input();
     let mut result : usize = 0;
 
